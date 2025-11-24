@@ -1,53 +1,47 @@
-### Preseed automático para Debian 13 (ejemplo base)
-# NOTA: Debes revisar y modificar los campos indicados más abajo.
-
+### Preseed automático para Debian 13 (actualizado completo)
 
 ############################
 ### CONFIGURACIÓN REGIONAL
 ############################
-# Idioma, país y teclado
 d-i debian-installer/language string es
 d-i debian-installer/country string ES
 d-i debian-installer/locale string es_ES.UTF-8
 d-i keyboard-configuration/xkb-keymap select es
 
-
 ############################
 ### RED
 ############################
-# Modo DHCP automático
 d-i netcfg/disable_autoconfig boolean false
 d-i netcfg/get_hostname string debian
 d-i netcfg/get_domain string local
 
-
 ############################
 ### USUARIO Y CONTRASEÑAS
 ############################
-# Root
+# Root con contraseña encriptada
 d-i passwd/root-login boolean true
-d-i passwd/root-password password rootpass
-d-i passwd/root-password-again password rootpass
+d-i passwd/root-password-crypted password $6$HFOkNAjBaVpkaysY$dHajAjPBjhzfykAKLb1EEmCs.y91uhUR9u9qZHBM4gKTVtaoJFGf5uLD./TRbULxOoSp8kCdVSJjh800pmBKb1
 
-
-# Usuario normal
+# Usuario normal con contraseña encriptada
 d-i passwd/user-fullname string Usuario
 d-i passwd/username string usuario
-d-i passwd/user-password password userpass
-d-i passwd/user-password-again password userpass
-
+d-i passwd/user-password-crypted password $6$Ur/1h5YYB/SSRx.O$7TMyQede7bBT5Pn6VbxmeBaHKfZZ9tR4UgwqwHaHj9sEnmNlvpa3TeZ9AGwobvFRpTRlgP7SmVzpfYVoEvYK9.
 
 ############################
 ### PARTICIONADO AUTOMÁTICO
 ############################
-# Particionado guiado usando todo el disco
-d-i partman-auto/disk string /dev/sda
+d-i partman-auto/disk string /dev/vda
 d-i partman-auto/method string regular
 d-i partman-auto/choose_recipe select atomic
+d-i partman-lvm/device_remove_lvm boolean true
+d-i partman-md/device_remove_md boolean true
 d-i partman/confirm_write_new_label boolean true
 d-i partman/confirm boolean true
 d-i partman/confirm_nooverwrite boolean true
-
+d-i partman/auto-lvm/guided_size string max
+d-i partman/choose_partition select finish
+d-i partman-partitioning/confirm_write_new_label boolean true
+d-i partman/confirm boolean true
 
 ############################
 ### MIRROR
@@ -57,7 +51,6 @@ d-i mirror/http/hostname string deb.debian.org
 d-i mirror/http/directory string /debian
 d-i mirror/http/proxy string
 
-
 ############################
 ### PAQUETES
 ############################
@@ -66,13 +59,14 @@ d-i pkgsel/include string
 d-i pkgsel/upgrade select safe-upgrade
 d-i pkgsel/update-policy select none
 
-
 ############################
 ### GRUB
 ############################
-d-i grub-installer/target string /dev/sda
-d-i grub-installer/bootdev string /dev/sda
-
+d-i grub-installer/only_debian boolean true
+d-i grub-installer/with_other_os boolean true
+d-i grub-installer/bootdev string /dev/vda
+d-i grub-installer/target string /dev/vda
+d-i partman-efi/non_efi_system boolean true
 
 ############################
 ### FINALIZACIÓN
